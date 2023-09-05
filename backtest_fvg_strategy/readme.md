@@ -1,0 +1,1 @@
+uses backtesting.py to test a strategy based on price action dipping into price areas that were not well traded into (ICT's fair value gap)
