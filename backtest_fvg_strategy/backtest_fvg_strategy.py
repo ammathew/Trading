@@ -6,7 +6,7 @@ import json
 
 #for testing
 #from backtesting.test import GOOG
-#import pdb
+import pdb
 
 np.random.seed(42)
 
@@ -49,6 +49,7 @@ class FVGStrategy(Strategy):
         last_fvg_bottom = self.fvg_arrays[1][-1]
 
         if(last_fvg_top
+           and last_fvg_bottom 
            and self.data.Low[-1] < last_fvg_top
            and self.data.Low[-1] >= last_fvg_bottom):
            try:
@@ -89,38 +90,58 @@ def get_swing_lows_arr(data):
 
     
 def get_last_fvg_arrays(data):
-   row_number_candlestick_1 = 0
-   fvg_top = None
-   fvg_bottom = None
-   fvg_arr_top = [None, None, None]
-   fvg_arr_bottom = [None, None, None]
+    row_number_candlestick_1 = 0
+    fvg_top = None
+    fvg_bottom = None
+    fvg_arr_top = [None, None, None]
+    fvg_arr_bottom = [None, None, None]
 
-   rows = data.Open.shape[0]
+    rows = data.Open.shape[0]
 
-   while row_number_candlestick_1 < (rows-3):
-      row_number_candlestick_2 = row_number_candlestick_1 + 1
-      row_number_candlestick_3 = row_number_candlestick_1 + 2
+    while row_number_candlestick_1 < (rows-3):
+        row_number_candlestick_2 = row_number_candlestick_1 + 1
+        row_number_candlestick_3 = row_number_candlestick_1 + 2
 
-      fvg_bottom_check = data.High[row_number_candlestick_1]
-      fvg_top_check = data.Low[row_number_candlestick_3]
-      second_candle_is_green = data.Open[row_number_candlestick_2] < data.Close[row_number_candlestick_2]
-      
+        fvg_bottom_check = data.High[row_number_candlestick_1]
+        fvg_top_check = data.Low[row_number_candlestick_3]
+        second_candle_is_green = data.Open[row_number_candlestick_2] < data.Close[row_number_candlestick_2]
 
-      if( fvg_bottom_check < (fvg_top_check + min_fvg_height) 
-          and second_candle_is_green
-          # add in 2nd candle stretching across FVG constraint
-         ):
-         fvg_top = fvg_top_check
-         fvg_bottom = fvg_bottom_check
-      elif(fvg_top and fvg_top_check < fvg_top):
-         fvg_top = None
-         fvg_bottom = None
-      fvg_arr_top.append(fvg_top)
-      fvg_arr_bottom.append(fvg_bottom)
-           
-      row_number_candlestick_1 = row_number_candlestick_2
+        if( fvg_bottom_check < (fvg_top_check + min_fvg_height) 
+            and second_candle_is_green):
+            fvg_top = fvg_top_check
+            fvg_bottom = fvg_bottom_check
+        elif(fvg_top and fvg_top_check < fvg_top):
+          fvg_top = None
+          fvg_bottom = None
+        fvg_arr_top.append(fvg_top)
+        fvg_arr_bottom.append(fvg_bottom)
+          
+        row_number_candlestick_1 = row_number_candlestick_2
 
-   return fvg_arr_top, fvg_arr_bottom
+    fvg_arr_bottom = munge_bottom_array(fvg_arr_bottom)
+    print(fvg_arr_bottom)
+
+    #pdb.set_trace()
+
+    return fvg_arr_top, fvg_arr_bottom
+
+def munge_bottom_array(fvg_arr_bottom):
+    munged_array = []
+    for item in fvg_arr_bottom:
+        if item is None:
+            munged_array.append(None)
+        else:
+            if(munged_array[-1]):
+                munged_array.append(munged_array[-1])
+            else:
+                munged_array.append(item)
+    return munged_array
+
+def get_last_not_none_element(arr):
+    for item in reversed(arr):
+        if item is not None:
+            return item
+    return None  # Return None if no non-None element is found
 
 
 def get_last_fvg_top_array(data):
