@@ -132,7 +132,6 @@ def get_last_fvg_bottom_array(data):
    arr = get_last_fvg_arrays(data)
    return arr[1]
 
-
 #price_data = GOOG.truncate(before=pd.Timestamp("2010-01-28"), after=pd.Timestamp("2011-05-05"))
 
 data = munge_polygon_api_data(data_file)
