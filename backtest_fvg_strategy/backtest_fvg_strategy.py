@@ -1,22 +1,18 @@
 from backtesting import Backtest, Strategy
-from backtesting.test import GOOG
-from backtesting.lib import crossover
 
 import pandas as pd
 import numpy as np
-
-from bokeh.models.tools import Toolbar
-
-import pdb
 import json
+
+#for testing
+#from backtesting.test import GOOG
+#import pdb
 
 np.random.seed(42)
 
-import talib
-
-import pdb
-
 data_file = "data.txt"
+min_fvg_height = .07
+min_risk_reward_ratio = 1
 
 
 def get_data(file_path):
@@ -48,26 +44,21 @@ class FVGStrategy(Strategy):
         self.swing_lows = self.I(get_swing_lows_arr, self.data, color="green")
         self.last_fvg_arr_top = self.I(get_last_fvg_top_array, self.data, overlay=True, color='red')
         self.last_fvg_arr_bottom = self.I(get_last_fvg_bottom_array, self.data, overlay=True, color='red')
-   
-        self.lows = self.I(get_lows, self.data, overlay=False)
-         
+        
     def next(self):
-        last_fvg = self.last_fvg_arr_top[-1]
+        last_fvg_top = self.last_fvg_arr_top[-1]
+        last_fvg_bottom = self.last_fvg_arr_bottom[-1]
 
-        if(last_fvg
-           and self.lows[-1] < last_fvg
-           and self.lows[-1] >= self.last_fvg_arr_bottom[-1]):
+        if(last_fvg_top
+           and self.data.Low[-1] < last_fvg_top
+           and self.data.Low[-1] >= last_fvg_bottom):
            try:
-              reward = self.swing_highs[-1] - last_fvg
-              risk = last_fvg - self.swing_lows[-1]
-              if reward > (risk*1):
-                 self.buy(sl=self.swing_lows[-1] , tp=self.swing_highs[-1], limit=last_fvg) #in a try/catch be cause in many cases swing low is greater than price backtesting.py is trying to buy at)
+              reward = self.swing_highs[-1] - last_fvg_top
+              risk = last_fvg_top - self.swing_lows[-1]
+              if reward > (risk * min_risk_reward_ratio):
+                 self.buy(sl=self.swing_lows[-1] , tp=self.swing_highs[-1], limit=last_fvg_top) #in a try/catch because in many cases swing low is greater than price backtesting.py is trying to buy at)
            except:
-              print("EXCEPTED")
-              self.swing_lows[-1]
-               
-              pass
- 
+               pass
 
 def get_swing_highs_arr(data):
     length_data = data.High.shape[0]
@@ -111,13 +102,18 @@ def get_last_fvg_arrays(data):
       row_number_candlestick_2 = row_number_candlestick_1 + 1
       row_number_candlestick_3 = row_number_candlestick_1 + 2
 
-      if( data.High[row_number_candlestick_1] < data.Low[row_number_candlestick_3] + .07
-          and data.Low[row_number_candlestick_2] < data.High[row_number_candlestick_2]
+      fvg_bottom_check = data.High[row_number_candlestick_1]
+      fvg_top_check = data.Low[row_number_candlestick_3]
+      second_candle_is_green = data.Open[row_number_candlestick_2] < data.Close[row_number_candlestick_2]
+      
+
+      if( fvg_bottom_check < (fvg_top_check + min_fvg_height) 
+          and second_candle_is_green
           # add in 2nd candle stretching across FVG constraint
          ):
-         fvg_top = data.Low[row_number_candlestick_3]
-         fvg_bottom = data.High[row_number_candlestick_1]
-      elif(fvg_top and data.Low[row_number_candlestick_3] <  fvg_top):
+         fvg_top = fvg_top_check
+         fvg_bottom = fvg_bottom_check
+      elif(fvg_top and fvg_top_check < fvg_top):
          fvg_top = None
          fvg_bottom = None
       fvg_arr_top.append(fvg_top)
@@ -135,14 +131,6 @@ def get_last_fvg_top_array(data):
 def get_last_fvg_bottom_array(data):
    arr = get_last_fvg_arrays(data)
    return arr[1]
-
-def get_lows(data):
-   length_data = data.Low.shape[0]
-   lows = []
-   for i in range(0, length_data ):
-      lows.append( data.Low[i] )
-
-   return lows
 
 
 #price_data = GOOG.truncate(before=pd.Timestamp("2010-01-28"), after=pd.Timestamp("2011-05-05"))
