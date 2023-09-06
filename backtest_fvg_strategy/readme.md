@@ -1,6 +1,6 @@
-uses backtesting.py to test a strategy based on price action dipping into price areas that were not well traded into (ICT's fair value gap)
+Uses backtesting.py to test a strategy based on price action dipping into price areas that were not well traded into (ICT's fair value gap)
 
-Strategy does very well when the broader market is in a big drawdown:
+Initial tests suggest that the strategy does very well when the broader market is in a big drawdown:
 
 ```
 Start                     2022-01-10 09:00:00
