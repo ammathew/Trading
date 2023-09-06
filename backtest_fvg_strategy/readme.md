@@ -2,7 +2,7 @@ uses backtesting.py to test a strategy based on price action dipping into price 
 
 Strategy does very well when the broader market is in a big drawdown:
 
-`
+```
 Start                     2022-01-10 09:00:00
 End                       2022-01-18 18:22:00
 Duration                      8 days 09:22:00
@@ -34,4 +34,4 @@ _strategy                         FVGStrategy
 _equity_curve                             ...
 _trades                        Size  Entry...
 dtype: object
-`
+```
