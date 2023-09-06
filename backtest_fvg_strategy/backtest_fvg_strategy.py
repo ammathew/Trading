@@ -119,9 +119,6 @@ def get_last_fvg_arrays(data):
         row_number_candlestick_1 = row_number_candlestick_2
 
     fvg_arr_bottom = munge_bottom_array(fvg_arr_bottom)
-    print(fvg_arr_bottom)
-
-    #pdb.set_trace()
 
     return fvg_arr_top, fvg_arr_bottom
 
