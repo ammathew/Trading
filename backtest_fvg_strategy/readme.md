@@ -35,3 +35,7 @@ _equity_curve                             ...
 _trades                        Size  Entry...
 dtype: object
 ```
+
+## Trade Example
+Price dips into region between 2 purple lines (an Fair Value Gap), buy is initiated, and sold when price reaches last swing high in price:
+<img width="252" alt="image" src="https://github.com/ammathew/Trading/assets/5540030/d54ee527-b34a-4b2c-bf49-39a9b0b28f2e">
