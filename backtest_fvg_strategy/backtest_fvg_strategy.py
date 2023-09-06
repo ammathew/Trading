@@ -42,12 +42,11 @@ class FVGStrategy(Strategy):
     def init(self):
         self.swing_highs = self.I(get_swing_highs_arr, self.data, color="blue")
         self.swing_lows = self.I(get_swing_lows_arr, self.data, color="green")
-        self.last_fvg_arr_top = self.I(get_last_fvg_top_array, self.data, overlay=True, color='red')
-        self.last_fvg_arr_bottom = self.I(get_last_fvg_bottom_array, self.data, overlay=True, color='red')
+        self.fvg_arrays = self.I(get_last_fvg_arrays, self.data, overlay=True, color='purple') #returns 2 sets of 1n arrays: fvg top and fvg bottom
         
     def next(self):
-        last_fvg_top = self.last_fvg_arr_top[-1]
-        last_fvg_bottom = self.last_fvg_arr_bottom[-1]
+        last_fvg_top = self.fvg_arrays[0][-1]
+        last_fvg_bottom = self.fvg_arrays[1][-1]
 
         if(last_fvg_top
            and self.data.Low[-1] < last_fvg_top
@@ -133,7 +132,6 @@ def get_last_fvg_bottom_array(data):
    return arr[1]
 
 #price_data = GOOG.truncate(before=pd.Timestamp("2010-01-28"), after=pd.Timestamp("2011-05-05"))
-
 data = munge_polygon_api_data(data_file)
 bt = Backtest(data, FVGStrategy , cash=10_000)
 results = bt.run()
