@@ -11,7 +11,7 @@ import pdb
 np.random.seed(42)
 
 data_file = "data.txt"
-min_fvg_height = .07
+min_fvg_height = .05
 min_risk_reward_ratio = 1
 
 
@@ -106,7 +106,7 @@ def get_last_fvg_arrays(data):
         fvg_top_check = data.Low[row_number_candlestick_3]
         second_candle_is_green = data.Open[row_number_candlestick_2] < data.Close[row_number_candlestick_2]
 
-        if( fvg_bottom_check < (fvg_top_check + min_fvg_height) 
+        if( fvg_bottom_check < (fvg_top_check - min_fvg_height) 
             and second_candle_is_green):
             fvg_top = fvg_top_check
             fvg_bottom = fvg_bottom_check
