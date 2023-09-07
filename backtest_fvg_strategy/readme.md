@@ -37,5 +37,6 @@ dtype: object
 ```
 
 ## Trade Example
-Price dips into region between 2 purple lines (an Fair Value Gap), buy is initiated, and sold when price reaches last swing high in price:
-<img width="252" alt="image" src="https://github.com/ammathew/Trading/assets/5540030/d54ee527-b34a-4b2c-bf49-39a9b0b28f2e">
+Price dips into region between 2 purple lines (an Fair Value Gap), buy is initiated (on next candle, in this case), and sold when price reaches last swing high in price:
+
+<img width="289" alt="image" src="https://github.com/ammathew/Trading/assets/5540030/263e98c2-6a2f-4182-be6b-d7a9def835ed">
